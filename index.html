@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profil Stüdyo</title>
+<link rel="stylesheet" href="stil.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
+</head>
+<body>
+<div class="studyo">
+  <header class="ust">
+    <div class="marka"><b>Profil Stüdyo</b><span>LED profil aydınlatma tasarımı</span></div>
+    <nav class="sekmeler" role="tablist" aria-label="Görünüm">
+      <button role="tab" aria-selected="true" data-sekme="render">Gerçekçi görünüm</button>
+      <button role="tab" aria-selected="false" data-sekme="3d">3D oda</button>
+    </nav>
+    <div class="ust-sag">
+      <div class="grup" id="kelvinGrup" aria-label="Işık rengi"><button data-k="3000" aria-pressed="true">3000K</button><button data-k="4000" aria-pressed="false">4000K</button></div>
+      <button id="tasarlaDugme" class="tasarla" aria-expanded="true" aria-controls="tasarim">Tasarla</button>
+    </div>
+  </header>
+
+  <section class="tasarim" id="tasarim" aria-label="Tasarım seçimleri">
+    <div class="adimlar" role="tablist">
+      <button role="tab" data-adim="oda" aria-selected="false"><span>1</span>Oda</button>
+      <button role="tab" data-adim="profil" aria-selected="true"><span>2</span>Profil</button>
+      <button role="tab" data-adim="taslak" aria-selected="false"><span>3</span>Taslak</button>
+      <button class="kapat" id="tasarimKapat" aria-label="Paneli kapat">Kapat</button>
+    </div>
+    <div class="adim-icerik" data-icerik="oda" hidden>
+      <div id="odalar" class="odalar" role="radiogroup" aria-label="Oda"></div>
+      <div class="olculer">
+        <label>En (m)<input id="odaEn" type="number" inputmode="decimal" min="1.6" max="15" step="0.1"></label>
+        <span class="carpi">×</span>
+        <label>Boy (m)<input id="odaBoy" type="number" inputmode="decimal" min="1.6" max="15" step="0.1"></label>
+        <div class="alan-kutu"><small>Alan</small><b id="alanM2"></b></div>
+      </div>
+      <p class="bilgi" id="olcuNot"></p>
+    </div>
+    <div class="adim-icerik" data-icerik="profil">
+      <p class="soru">Işık nerede olacak?</p>
+      <div id="yerler" class="yerler" role="radiogroup" aria-label="Kullanım yeri"></div>
+      <p class="yer-not" id="yerNot"></p>
+      <div id="urunler" class="urunler" role="radiogroup" aria-label="Profil"></div>
+    </div>
+    <div class="adim-icerik" data-icerik="taslak" hidden>
+      <div id="paketler" class="paketler" role="radiogroup" aria-label="Taslak"></div>
+      <p class="bilgi" id="taslakNot"></p>
+    </div>
+  </section>
+
+  <main class="sahne">
+    <div class="alan render-alan" id="alanRender">
+      <img id="renderResim" alt="">
+      <canvas id="panoTuval" hidden></canvas>
+      <button class="pano-dugme" id="panoDugme" hidden></button>
+      <p class="pano-not" id="panoNot" hidden></p>
+      <div class="render-yok" id="renderYok" hidden><p>Bu seçimin gerçekçi görüntüsü hazırlanıyor.</p><button data-git="3d">3D odada gör</button></div>
+    </div>
+    <div class="alan" id="alan3d" hidden>
+      <canvas id="tuval"></canvas>
+      <div class="arac" id="gorunumler">
+        <button data-g="oda" aria-pressed="true">Oda</button>
+        <button data-g="perspektif" aria-pressed="false">Perspektif</button>
+        <button data-g="detay" aria-pressed="false">Ürün detay</button>
+        <button data-g="ustten" aria-pressed="false">Üstten</button>
+        <button data-g="gez" aria-pressed="false">Odada gez</button>
+        <span class="ayrac"></span>
+        <span class="grup" id="isikGrup"><button data-isik="1" aria-pressed="true">Işık açık</button><button data-isik="0" aria-pressed="false">Kapalı</button></span>
+      </div>
+      <div class="gez-tuslar" id="gezTuslar" hidden>
+        <button data-tus="ArrowUp" aria-label="İleri">▲</button>
+        <div><button data-tus="ArrowLeft" aria-label="Sola dön">◀</button><button data-tus="ArrowDown" aria-label="Geri">▼</button><button data-tus="ArrowRight" aria-label="Sağa dön">▶</button></div>
+      </div>
+      <p class="ipucu" id="ipucu">Sürükleyerek döndürün, tekerlekle yaklaşın.</p>
+    </div>
+    <div class="alan plan-alan harita-kat" id="alanPlan" hidden>
+      <button class="harita-kapat" id="haritaKapat">Kapat</button>
+      <div class="dagilim">
+        <h2 class="harita-baslik">Işık dağılımı</h2>
+        <div class="dagilim-harita" id="harita"><canvas id="haritaTuval"></canvas><div id="haritaPlan"></div></div>
+        <div class="olcek" id="olcek"></div>
+        <p class="bilgi" id="haritaNot"></p>
+      </div>
+    </div>
+    <div class="yukleniyor" id="yukleniyor">Oda hazırlanıyor…</div>
+    <div class="etiket" id="etiket"></div>
+    <div class="yer-rozet" id="yerRozet"></div>
+
+    <aside class="hesap" id="hesap" aria-label="Aydınlatma hesabı">
+      <button class="hesap-bas" id="hesapBas" aria-expanded="true">
+        <span>Aydınlatma hesabı</span><b id="hesapKisa"></b>
+      </button>
+      <div class="hesap-govde" id="hesapGovde"></div>
+    </aside>
+  </main>
+</div>
+<script type="module" src="uygulama.js"></script>
+</body>
+</html>
